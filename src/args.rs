@@ -1,5 +1,5 @@
 use clap::{Args, Parser, Subcommand};
-use todo::DEFAULT_DATE;
+use chrono::{Utc, Duration};
 
 #[derive(Debug, Parser)]
 #[clap(author, version, about)]
@@ -35,16 +35,20 @@ pub enum TaskSubcommand {
 #[derive(Debug, Args)]
 pub struct AddTask {
     /// Project name
-    #[arg(default_value_t = String::from("General"))]
+    #[arg(short, long, default_value_t = String::from("General"))]
     project: String,
 
     #[arg(short, long)]
     /// Task description
     task: String,
 
-    #[arg(short, long, default_value_t = format!("{}", DEFAULT_DATE.format("%Y-%m-%d")))]
+    #[arg(short, long, default_value_t = format!("{}", (Utc::now() + Duration::days(7)).format("%Y-%m-%d")))]
     /// Due date in format 'YYYY-MM-DD'
-    due_date: String
+    due_date: String,
+
+    /// Status
+    #[arg(default_value_t = false)]
+    complete: bool,
 }
 
 #[derive(Debug, Args)]
@@ -61,6 +65,6 @@ pub struct UpdateTask {
 #[derive(Debug, Args)]
 pub struct ViewTask {
     /// View specific project
-    #[arg(default_value_t = String::from("All"))]
+    #[arg(short, long, default_value_t = String::from("All"))]
     project: String,
 }

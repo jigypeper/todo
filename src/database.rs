@@ -2,7 +2,6 @@ use rusqlite::{params, Connection, Result, named_params};
 use chrono::{DateTime, Utc};
 
 pub struct TodoData {
-    pub id: u64,
     pub project: String,
     pub task: String,
     pub due_data: DateTime<Utc>,
@@ -15,7 +14,7 @@ impl TodoData {
         
         conn.execute(
             "CREATE TABLE IF NOT EXISTS data (
-                id INT PRIMARY KEY, 
+                id INT PRIMARY KEY NOT NULL, 
                 project VARCHAR(50) NOT NULL,
                 task VARCHAR(100) NOT NULL,
                 due_date DATE,
@@ -27,9 +26,8 @@ impl TodoData {
         let tx = conn.transaction()?;
         tx.execute(
             "INSERT OR REPLACE INTO data (id, project, task, due_date, complete)
-            VALUES (:id, :project, :task, :due_date, :complete)",
+            VALUES (:project, :task, :due_date, :complete)",
             named_params! {
-                ":id": self.id,
                 ":project": self.project,
                 ":task": self.task,
                 ":due_date": format!("{}", self.due_data.format("%Y-%m-%d")),
