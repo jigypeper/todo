@@ -1,10 +1,11 @@
-use chrono::{Utc};
+use chrono::{Utc, Duration};
 
 pub mod database;
 pub mod views;
 pub mod args;
 
-
+pub static TODAY: chrono::DateTime<Utc> = Utc::now();
+pub static DEFAULT_DATE: chrono::DateTime<Utc> = TODAY + Duration::days(7);
 
 #[cfg(test)]
 mod tests {

@@ -1,9 +1,10 @@
 use clap::{Args, Parser, Subcommand};
+use todo::DEFAULT_DATE;
 
 #[derive(Debug, Parser)]
 #[clap(author, version, about)]
 pub struct Cli {
-    #[clap(Subcommand)]
+    #[command(subcommand)]
     pub options: OptionTypes,
 }
 
@@ -15,7 +16,7 @@ pub enum OptionTypes {
 
 #[derive(Debug, Args)]
 pub struct TaskOptions {
-    #[clap(Subcommand)]
+    #[command(subcommand)]
     pub command: TaskSubcommand
 }
 
@@ -34,12 +35,14 @@ pub enum TaskSubcommand {
 #[derive(Debug, Args)]
 pub struct AddTask {
     /// Project name
-    #[clap(default_value_t = String::from("General"))]
+    #[arg(default_value_t = String::from("General"))]
     project: String,
 
+    #[arg(short, long)]
     /// Task description
     task: String,
 
+    #[arg(short, long, default_value_t = format!("{}", DEFAULT_DATE.format("%Y-%m-%d")))]
     /// Due date in format 'YYYY-MM-DD'
     due_date: String
 }
@@ -47,20 +50,17 @@ pub struct AddTask {
 #[derive(Debug, Args)]
 pub struct UpdateTask {
     /// Mark as complete
-    #[clap(default_value_t = false)]
+    #[arg(default_value_t = false)]
     complete: bool,
 
     /// Delete task
-    #[clap(default_value_t = false)]
+    #[arg(default_value_t = false)]
     delete: bool,
 }
 
 #[derive(Debug, Args)]
 pub struct ViewTask {
-    /// View all
-    #[clap(default_value_t = false)]
-    all: bool,
-
     /// View specific project
+    #[arg(default_value_t = String::from("All"))]
     project: String,
 }
