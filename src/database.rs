@@ -16,7 +16,7 @@ impl TodoData {
         
         conn.execute(
             "CREATE TABLE IF NOT EXISTS data (
-                id INT PRIMARY KEY, 
+                id INTEGER PRIMARY KEY NOT NULL, 
                 project VARCHAR(50) NOT NULL,
                 task VARCHAR(100) NOT NULL,
                 due_date DATE,
@@ -24,7 +24,7 @@ impl TodoData {
             );", 
             (),
         )?;
-        // TODO: look into automated primary key generation
+        
         let tx = conn.transaction()?;
         tx.execute(
             "INSERT OR REPLACE INTO data (project, task, due_date, complete)
