@@ -1,6 +1,9 @@
 use clap::{Args, Parser, Subcommand};
 use chrono::{Utc, Duration};
 
+use crate::database::TodoData;
+
+
 #[derive(Debug, Parser)]
 #[clap(author, version, about)]
 pub struct Cli {
@@ -36,19 +39,32 @@ pub enum TaskSubcommand {
 pub struct AddTask {
     /// Project name
     #[arg(short, long, default_value_t = String::from("General"))]
-    project: String,
+    pub project: String,
 
     #[arg(short, long)]
     /// Task description
-    task: String,
+    pub task: String,
 
     #[arg(short, long, default_value_t = format!("{}", (Utc::now() + Duration::days(7)).format("%Y-%m-%d")))]
     /// Due date in format 'YYYY-MM-DD'
-    due_date: String,
+    pub due_date: String,
 
     /// Status
-    #[arg(default_value_t = false)]
-    complete: bool,
+    #[arg(short, long, default_value_t = false)]
+    pub complete: bool,
+}
+
+impl AddTask {
+    pub fn to_todo_data(self) -> TodoData {
+        let new_type = TodoData {
+            project: self.project,
+            task: self.task,
+            due_date: self.due_date,
+            complete: self.complete,
+        };
+
+        new_type
+    }
 }
 
 #[derive(Debug, Args)]
