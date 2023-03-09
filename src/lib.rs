@@ -3,6 +3,7 @@
 pub mod database;
 pub mod views;
 pub mod args;
+pub mod data_handler;
 
 // pub const TODAY: chrono::DateTime<Utc> = Utc::now();
 // pub static DEFAULT_DATE: chrono::DateTime<Utc> = TODAY + Duration::days(7);

@@ -1,7 +1,7 @@
 // use chrono::{DateTime, Utc};
 use clap::Parser;
 // use todo::database::TodoData;
-use todo::args::{Cli, OptionTypes, TaskSubcommand};
+use todo::{args::{Cli, OptionTypes, TaskSubcommand}, data_handler};
 
 fn main() {
     let cli = Cli::parse();
@@ -9,19 +9,7 @@ fn main() {
     println!("{:?}", cli);
 
     match cli.options {
-        OptionTypes::Task(more_options) => match more_options.command {
-            TaskSubcommand::Add(task) => {
-                // TODO: find way to change AddTask struct to TodoData struct
-                // let new_task = TodoData {
-                //     ..task
-                // };
-
-                // new_task.write_data();
-                let new_task = task.to_todo_data();
-                new_task.write_data().expect("No data");
-            },
-            _ => println!("Other stuff"),
-        }
+        OptionTypes::Task(more_options) => data_handler::add_data(more_options.command)
     }
 
 
