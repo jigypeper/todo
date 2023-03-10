@@ -11,7 +11,7 @@ pub struct TodoData {
 
 
 impl TodoData {
-    pub fn write_data(self) -> Result<()>{
+    pub fn write_data(self) -> Result<()> {
         // TODO: move todo.db to a constant in lib.rs
         let mut conn = Connection::open("todo.db").unwrap();
         
