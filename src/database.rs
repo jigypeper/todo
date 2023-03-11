@@ -1,4 +1,6 @@
 use rusqlite::{Connection, Result, named_params};
+
+use crate::{DBFILE, args::UpdateTask};
 // use chrono::{DateTime, Utc};
 
 
@@ -12,8 +14,7 @@ pub struct TodoData {
 
 impl TodoData {
     pub fn write_data(self) -> Result<()> {
-        // TODO: move todo.db to a constant in lib.rs
-        let mut conn = Connection::open("todo.db").unwrap();
+        let mut conn = Connection::open(DBFILE).unwrap();
         
         conn.execute(
             "CREATE TABLE IF NOT EXISTS data (
@@ -44,6 +45,36 @@ impl TodoData {
         tx.commit()?;
 
         Ok(())
+    }
+
+    pub fn update_task(self, update_task: UpdateTask) -> Result <()> {
+        if update_task.complete == true && update_task.delete == true {
+            println!("Cannot delete and update a task");
+            Ok(())
+        } else if update_task.complete == true {
+            let mut conn = Connection::open(DBFILE).unwrap();
+        
+        
+            let tx = conn.transaction()?;
+            tx.execute(
+                "UPDATE data
+                SET complete = :complete
+                WHERE id = :id",
+                named_params! {
+                    ":id": update_task.id,
+                    ":complete": match self.complete {
+                        true => 1,
+                        false => 0,
+                    }, 
+                }
+            )?;
+
+            tx.commit()?;
+
+            Ok(())
+        } else {
+            todo!()
+        }
     }
 
     pub fn get_all(self) -> Option<Vec<TodoData>> {

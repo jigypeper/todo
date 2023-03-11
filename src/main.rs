@@ -9,7 +9,7 @@ fn main() {
     println!("{:?}", cli);
 
     match cli.options {
-        OptionTypes::Task(more_options) => data_handler::add_data(more_options.command)
+        OptionTypes::Task(more_options) => data_handler::handle_data(more_options.command)
     }
 
 

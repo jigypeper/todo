@@ -69,13 +69,29 @@ impl AddTask {
 
 #[derive(Debug, Args)]
 pub struct UpdateTask {
-    /// Mark as complete
-    #[arg(default_value_t = false)]
-    complete: bool,
+    /// Row ID for task
+    pub id: u64,
 
-    /// Delete task
-    #[arg(default_value_t = false)]
-    delete: bool,
+    /// Mark as complete (no args needed just the flag i.e -c or -complete)
+    #[arg(short, long, default_value_t = false)]
+    pub complete: bool,
+
+    /// Delete task (no args needed just the flag i.e -d or -delete)
+    #[arg(short, long, default_value_t = false)]
+    pub delete: bool,
+}
+
+impl UpdateTask {
+    pub fn to_todo_data(self) -> TodoData {
+        let new_type = TodoData {
+            project: String::from("Placeholder"),
+            task: String::from("Placeholder"),
+            due_date: String::from("Placeholder"),
+            complete: self.complete,
+        };
+
+        new_type
+    }
 }
 
 #[derive(Debug, Args)]
