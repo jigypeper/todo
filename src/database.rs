@@ -73,7 +73,21 @@ impl TodoData {
 
             Ok(())
         } else {
-            todo!()
+            let mut conn = Connection::open(DBFILE).unwrap();
+        
+        
+            let tx = conn.transaction()?;
+            tx.execute(
+                "DELETE FROM data
+                WHERE id = :id",
+                named_params! {
+                    ":id": update_task.id,
+                }
+            )?;
+
+            tx.commit()?;
+
+            Ok(())
         }
     }
 
