@@ -3,6 +3,8 @@ use rusqlite::{Connection, Result, named_params};
 use crate::{DBFILE, args::UpdateTask};
 // use chrono::{DateTime, Utc};
 
+pub trait Viewer {}
+
 
 pub struct TodoData {
     pub project: String,
@@ -96,3 +98,18 @@ impl TodoData {
     }
 
 }
+
+pub struct TodoView {
+    pub project: u64,
+    pub task: String,
+    pub due_date: String,
+    pub complete: bool,
+}
+
+impl Viewer for TodoView {}
+
+pub fn view_tasks() {
+    todo!();
+}
+
+// use trait bounds to create a function that takes arguments that implement Viewer
