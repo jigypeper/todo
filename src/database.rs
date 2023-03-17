@@ -1,4 +1,5 @@
-use rusqlite::{Connection, Result, named_params};
+use rusqlite::{Connection, Result, named_params, MappedRows};
+
 
 use crate::{DBFILE, args::UpdateTask};
 // use chrono::{DateTime, Utc};
@@ -108,8 +109,44 @@ pub struct TodoView {
 
 impl Viewer for TodoView {}
 
-pub fn view_tasks() {
-    todo!();
+pub fn get_tasks(project_name: &impl Viewer) -> Result<Vec<TodoView>> {
+    let mut conn = Connection::open(DBFILE).unwrap();
+    if let mut stmt = match projec_name {
+        "All" => {
+            conn.prepare(
+                "SELECT * FROM data;",
+            )?;
+        },
+
+        _ => {
+            conn.prepare(
+                "SELECT * FROM data
+                 WHERE project = :project_name;",
+            )?;
+        }
+    };
+        
+
+    let tasks_iter = stmt.query_map([], |row| {
+        Ok(TodoView {
+            project: row.get(0)?,
+            task: row.get(1)?,
+            due_date: row.get(2)?,
+            complete: match row.get(3).unwrap() {
+                1 => true,
+                0 => false,
+            }?
+        })
+    })?;
+
+    let mut result = Vec::new();
+
+    for task in tasks_iter {
+        result.push(task?);
+    }
+
+    Ok(result)
+    
 }
 
 // use trait bounds to create a function that takes arguments that implement Viewer
