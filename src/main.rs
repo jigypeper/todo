@@ -1,7 +1,7 @@
 // use chrono::{DateTime, Utc};
 use clap::Parser;
 // use todo::database::TodoData;
-use todo::{args::{Cli, OptionTypes, TaskSubcommand}, data_handler};
+use todo::{args::{Cli, OptionTypes}, data_handler};
 
 fn main() {
     let cli = Cli::parse();
