@@ -1,11 +1,9 @@
-use rusqlite::{Connection, Result, named_params};
+use rusqlite::{named_params, Connection, Result};
 
-
-use crate::{args::UpdateTask};
+use crate::args::UpdateTask;
 // use chrono::{DateTime, Utc};
 
 pub trait Viewer {}
-
 
 pub struct TodoData {
     pub project: String,
@@ -14,22 +12,21 @@ pub struct TodoData {
     pub complete: bool,
 }
 
-
 impl TodoData {
     pub fn write_data(self, db_file: &str) -> Result<()> {
         let mut conn = Connection::open(db_file).unwrap();
-        
+
         conn.execute(
             "CREATE TABLE IF NOT EXISTS data (
-                id INTEGER PRIMARY KEY NOT NULL, 
+                id INTEGER PRIMARY KEY NOT NULL,
                 project VARCHAR(50) NOT NULL,
                 task VARCHAR(100) NOT NULL,
                 due_date DATE,
                 complete BOOLEAN NOT NULL CHECK (complete IN (0, 1))
-            );", 
+            );",
             (),
         )?;
-        
+
         let tx = conn.transaction()?;
         tx.execute(
             "INSERT OR REPLACE INTO data (project, task, due_date, complete)
@@ -41,8 +38,8 @@ impl TodoData {
                 ":complete": match self.complete {
                     true => 1,
                     false => 0,
-                }, 
-            }
+                },
+            },
         )?;
 
         tx.commit()?;
@@ -50,14 +47,13 @@ impl TodoData {
         Ok(())
     }
 
-    pub fn update_task(self, update_task: UpdateTask, db_file: &str) -> Result <()> {
+    pub fn update_task(self, update_task: UpdateTask, db_file: &str) -> Result<()> {
         if update_task.complete == true && update_task.delete == true {
             println!("Cannot delete and update a task");
             Ok(())
         } else if update_task.complete == true {
             let mut conn = Connection::open(db_file).unwrap();
-        
-        
+
             let tx = conn.transaction()?;
             tx.execute(
                 "UPDATE data
@@ -68,8 +64,8 @@ impl TodoData {
                     ":complete": match self.complete {
                         true => 1,
                         false => 0,
-                    }, 
-                }
+                    },
+                },
             )?;
 
             tx.commit()?;
@@ -77,15 +73,14 @@ impl TodoData {
             Ok(())
         } else {
             let mut conn = Connection::open(db_file).unwrap();
-        
-        
+
             let tx = conn.transaction()?;
             tx.execute(
                 "DELETE FROM data
                 WHERE id = :id",
                 named_params! {
                     ":id": update_task.id,
-                }
+                },
             )?;
 
             tx.commit()?;
@@ -97,11 +92,12 @@ impl TodoData {
     pub fn get_all(self) -> Option<Vec<TodoData>> {
         todo!();
     }
-
 }
 
+#[derive(Debug, PartialEq)]
 pub struct TodoView {
-    pub project: u64,
+    pub id: u64,
+    pub project: String,
     pub task: String,
     pub due_date: String,
     pub complete: bool,
@@ -110,30 +106,27 @@ pub struct TodoView {
 impl Viewer for TodoView {}
 
 pub fn get_tasks(project_name: &str, db_file: &str) -> Result<Vec<TodoView>> {
-    let mut conn = Connection::open(db_file).unwrap();
-    
+    let conn = Connection::open(db_file).unwrap();
+
     let mut stmt = match project_name {
-        "All" => conn.prepare(
-                "SELECT * FROM data;",
-            )?,
+        "All" => conn.prepare("SELECT * FROM data;")?,
 
         _ => conn.prepare(
-                "SELECT * FROM data
+            "SELECT * FROM data
                  WHERE project = :project_name;",
-            )?,
+        )?,
     };
-        
-
+    // TODO: Need to match on this to get query binding version
     let tasks_iter = stmt.query_map([], |row| {
         Ok(TodoView {
-            project: row.get(0)?,
-            task: row.get(1)?,
-            due_date: row.get(2)?,
-            complete: match row.get(3).unwrap() {
+            id: row.get(0)?,
+            project: row.get(1)?,
+            task: row.get(2)?,
+            due_date: row.get(3)?,
+            complete: match row.get(4).unwrap() {
                 1 => true,
-                0 => false,
-                _ => false
-            }
+                _ => false,
+            },
         })
     })?;
 
@@ -144,15 +137,20 @@ pub fn get_tasks(project_name: &str, db_file: &str) -> Result<Vec<TodoView>> {
     }
 
     Ok(result)
-    
 }
-
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
     static test_database: &str = "test.db";
+
+    fn drop_table() -> Result<()> {
+        let conn = Connection::open(test_database).unwrap();
+        conn.execute("DROP TABLE IF EXISTS data;", ())?;
+
+        Ok(())
+    }
 
     #[test]
     fn add_data() {
@@ -164,10 +162,14 @@ mod tests {
         };
 
         assert_eq!(Ok(()), sample.write_data(test_database));
+
+        drop_table().unwrap();
     }
 
     #[test]
     fn update_data() {
+        drop_table().unwrap();
+
         let prepare = TodoData {
             project: String::from("Test"),
             task: String::from("Test"),
@@ -182,20 +184,23 @@ mod tests {
             complete: false,
         };
 
-        prepare.write_data(test_database).expect("database does not exist");
+        prepare
+            .write_data(test_database)
+            .expect("database does not exist");
 
-        let sample_param = UpdateTask { 
-            id: 1, 
-            complete: true, 
-            delete: false
+        let sample_param = UpdateTask {
+            id: 1,
+            complete: true,
+            delete: false,
         };
 
         assert_eq!(Ok(()), sample.update_task(sample_param, test_database));
-
     }
 
     #[test]
     fn delete_data() {
+        drop_table().unwrap();
+
         let prepare = TodoData {
             project: String::from("Test"),
             task: String::from("Test"),
@@ -210,15 +215,70 @@ mod tests {
             complete: false,
         };
 
-        prepare.write_data(test_database).expect("database does not exist");
+        prepare
+            .write_data(test_database)
+            .expect("database does not exist");
 
-        let sample_param = UpdateTask { 
-            id: 1, 
-            complete: false, 
-            delete: true
+        let sample_param = UpdateTask {
+            id: 1,
+            complete: false,
+            delete: true,
         };
 
         assert_eq!(Ok(()), sample.update_task(sample_param, test_database));
     }
 
+    #[test]
+    fn get_all_data() {
+        drop_table().unwrap();
+
+        let prepare = TodoData {
+            project: String::from("Apple"),
+            task: String::from("Test"),
+            due_date: String::from("2023-01-01"),
+            complete: false,
+        };
+
+        prepare
+            .write_data(test_database)
+            .expect("database does not exist");
+
+        assert_eq!(
+            Ok(vec![TodoView {
+                id: 1,
+                project: String::from("Apple"),
+                task: String::from("Test"),
+                due_date: String::from("2023-01-01"),
+                complete: false,
+            }]),
+            get_tasks("All", test_database)
+        );
+    }
+
+    #[test]
+    fn get_project_data() {
+        drop_table().unwrap();
+
+        let prepare = TodoData {
+            project: String::from("Apple"),
+            task: String::from("Test"),
+            due_date: String::from("2023-01-01"),
+            complete: false,
+        };
+
+        prepare
+            .write_data(test_database)
+            .expect("database does not exist");
+
+        assert_eq!(
+            Ok(vec![TodoView {
+                id: 1,
+                project: String::from("Apple"),
+                task: String::from("Test"),
+                due_date: String::from("2023-01-01"),
+                complete: false,
+            }]),
+            get_tasks("Apple", test_database)
+        );
+    }
 }
