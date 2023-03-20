@@ -108,15 +108,39 @@ impl Viewer for TodoView {}
 pub fn get_tasks(project_name: &str, db_file: &str) -> Result<Vec<TodoView>> {
     let conn = Connection::open(db_file).unwrap();
 
-    let mut stmt = match project_name {
-        "All" => conn.prepare("SELECT * FROM data;")?,
+    let mut stmt = conn.prepare(
+        "SELECT * FROM data
+                 WHERE project = :project_name OR :project_name IS NULL;",
+    )?;
 
-        _ => conn.prepare(
-            "SELECT * FROM data
-                 WHERE project = :project_name;",
-        )?,
-    };
     // TODO: Need to match on this to get query binding version
+    let tasks_iter = stmt.query_map(&[(":project_name", &project_name)], |row| {
+        Ok(TodoView {
+            id: row.get(0)?,
+            project: row.get(1)?,
+            task: row.get(2)?,
+            due_date: row.get(3)?,
+            complete: match row.get(4).unwrap() {
+                1 => true,
+                _ => false,
+            },
+        })
+    })?;
+
+    let mut result = Vec::new();
+
+    for task in tasks_iter {
+        result.push(task?);
+    }
+
+    Ok(result)
+}
+
+pub fn get_all_tasks(db_file: &str) -> Result<Vec<TodoView>> {
+    let conn = Connection::open(db_file).unwrap();
+
+    let mut stmt = conn.prepare("SELECT * FROM data;")?;
+
     let tasks_iter = stmt.query_map([], |row| {
         Ok(TodoView {
             id: row.get(0)?,
@@ -251,7 +275,7 @@ mod tests {
                 due_date: String::from("2023-01-01"),
                 complete: false,
             }]),
-            get_tasks("All", test_database)
+            get_all_tasks(test_database)
         );
     }
 
