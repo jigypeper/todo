@@ -167,10 +167,10 @@ pub fn get_all_tasks(db_file: &str) -> Result<Vec<TodoView>> {
 mod tests {
     use super::*;
 
-    static test_database: &str = "test.db";
+    static TEST_DATABASE: &str = "test.db";
 
     fn drop_table() -> Result<()> {
-        let conn = Connection::open(test_database).unwrap();
+        let conn = Connection::open(TEST_DATABASE).unwrap();
         conn.execute("DROP TABLE IF EXISTS data;", ())?;
 
         Ok(())
@@ -185,7 +185,7 @@ mod tests {
             complete: false,
         };
 
-        assert_eq!(Ok(()), sample.write_data(test_database));
+        assert_eq!(Ok(()), sample.write_data(TEST_DATABASE));
 
         drop_table().unwrap();
     }
@@ -209,7 +209,7 @@ mod tests {
         };
 
         prepare
-            .write_data(test_database)
+            .write_data(TEST_DATABASE)
             .expect("database does not exist");
 
         let sample_param = UpdateTask {
@@ -218,7 +218,7 @@ mod tests {
             delete: false,
         };
 
-        assert_eq!(Ok(()), sample.update_task(sample_param, test_database));
+        assert_eq!(Ok(()), sample.update_task(sample_param, TEST_DATABASE));
     }
 
     #[test]
@@ -240,7 +240,7 @@ mod tests {
         };
 
         prepare
-            .write_data(test_database)
+            .write_data(TEST_DATABASE)
             .expect("database does not exist");
 
         let sample_param = UpdateTask {
@@ -249,7 +249,7 @@ mod tests {
             delete: true,
         };
 
-        assert_eq!(Ok(()), sample.update_task(sample_param, test_database));
+        assert_eq!(Ok(()), sample.update_task(sample_param, TEST_DATABASE));
     }
 
     #[test]
@@ -264,7 +264,7 @@ mod tests {
         };
 
         prepare
-            .write_data(test_database)
+            .write_data(TEST_DATABASE)
             .expect("database does not exist");
 
         assert_eq!(
@@ -275,7 +275,7 @@ mod tests {
                 due_date: String::from("2023-01-01"),
                 complete: false,
             }]),
-            get_all_tasks(test_database)
+            get_all_tasks(TEST_DATABASE)
         );
     }
 
@@ -291,7 +291,7 @@ mod tests {
         };
 
         prepare
-            .write_data(test_database)
+            .write_data(TEST_DATABASE)
             .expect("database does not exist");
 
         assert_eq!(
@@ -302,7 +302,7 @@ mod tests {
                 due_date: String::from("2023-01-01"),
                 complete: false,
             }]),
-            get_tasks("Apple", test_database)
+            get_tasks("Apple", TEST_DATABASE)
         );
     }
 }

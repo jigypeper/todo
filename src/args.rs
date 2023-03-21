@@ -1,8 +1,7 @@
+use chrono::{Duration, Utc};
 use clap::{Args, Parser, Subcommand};
-use chrono::{Utc, Duration};
 
 use crate::database::{TodoData, Viewer};
-
 
 #[derive(Debug, Parser)]
 #[clap(author, version, about)]
@@ -20,7 +19,7 @@ pub enum OptionTypes {
 #[derive(Debug, Args)]
 pub struct TaskOptions {
     #[command(subcommand)]
-    pub command: TaskSubcommand
+    pub command: TaskSubcommand,
 }
 
 #[derive(Debug, Subcommand)]
@@ -98,7 +97,7 @@ impl UpdateTask {
 pub struct ViewTask {
     /// View specific project
     #[arg(short, long, default_value_t = String::from("All"))]
-    project: String,
+    pub project: String,
 }
 
 impl Viewer for ViewTask {}
