@@ -1,9 +1,5 @@
-use rusqlite::{named_params, Connection, Result};
-
 use crate::args::UpdateTask;
-// use chrono::{DateTime, Utc};
-
-pub trait Viewer {}
+use rusqlite::{named_params, Connection, Result};
 
 pub struct TodoData {
     pub project: String,
@@ -102,8 +98,6 @@ pub struct TodoView {
     pub due_date: String,
     pub complete: bool,
 }
-
-impl Viewer for TodoView {}
 
 pub fn get_tasks(project_name: &str, db_file: &str) -> Result<Vec<TodoView>> {
     let conn = Connection::open(db_file).unwrap();

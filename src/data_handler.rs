@@ -1,4 +1,8 @@
-use crate::args::{TaskSubcommand, UpdateTask};
+use crate::{
+    args::{TaskSubcommand, UpdateTask},
+    database::{get_all_tasks, get_tasks},
+    views::show_data,
+};
 
 static DB_FILE: &str = "todo.db";
 
@@ -19,6 +23,27 @@ pub fn handle_data(data_to_handle: TaskSubcommand) {
                 .update_task(parameters, DB_FILE)
                 .expect("Database does not exist, create task first");
         }
-        TaskSubcommand::View(_) => todo!(),
+        TaskSubcommand::View(view) => match &view.project[..] {
+            "All" => {
+                let results = get_all_tasks(DB_FILE);
+                match results {
+                    Ok(data) => {
+                        let output = show_data(data);
+                        output.printstd();
+                    }
+                    Err(_) => println!("No database or data"),
+                }
+            }
+            _ => {
+                let results = get_tasks(&view.project[..], DB_FILE);
+                match results {
+                    Ok(data) => {
+                        let output = show_data(data);
+                        output.printstd();
+                    }
+                    Err(_) => println!("No database or data"),
+                }
+            }
+        },
     }
 }

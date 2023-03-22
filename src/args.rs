@@ -1,7 +1,7 @@
 use chrono::{Duration, Utc};
 use clap::{Args, Parser, Subcommand};
 
-use crate::database::{TodoData, Viewer};
+use crate::database::TodoData;
 
 #[derive(Debug, Parser)]
 #[clap(author, version, about)]
@@ -99,5 +99,3 @@ pub struct ViewTask {
     #[arg(short, long, default_value_t = String::from("All"))]
     pub project: String,
 }
-
-impl Viewer for ViewTask {}
