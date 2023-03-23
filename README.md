@@ -27,4 +27,5 @@ Options:
 
 For example:
 `todo task add -t "buy apples" -p "food" -d "2023-12-12"` will add the task "buy apples" to your list with a project titled "food" and due date of "2023-12-12". You must specify the flags when there is no default value. It is also important to match the format for the date, there will be parsing errors when trying to view the data if you type it incorrectly.  
-The tasks which are overdue will be marked bold in red.
+The tasks which are overdue will be marked bold in red.  
+![My Image](images/tasks.png)
