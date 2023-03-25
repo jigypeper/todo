@@ -11,7 +11,16 @@ pub fn show_data(data: Vec<TodoView>) -> Table {
     for row in data {
         // use chrono to convert date string into a utc datetime type
         let date = row.due_date.clone();
-        let naive_date = NaiveDate::parse_from_str(&date, "%Y-%m-%d").unwrap();
+        let naive_date = match NaiveDate::parse_from_str(&date, "%Y-%m-%d") {
+            Ok(date) => date,
+            Err(_) => {
+                println!(
+                    "Date on task '{}' is incorrect, delete and update for correct overdue marking",
+                    row.id
+                );
+                NaiveDate::parse_from_str("2000-01-01", "%Y-%m-%d").unwrap()
+            }
+        };
         let naive_time = NaiveTime::from_hms_opt(0, 0, 0).unwrap();
         let naive_date_time = NaiveDateTime::new(naive_date, naive_time);
         let utc_date_time = DateTime::<Utc>::from_utc(naive_date_time, Utc);
