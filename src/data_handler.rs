@@ -19,9 +19,9 @@ pub fn handle_data(data_to_handle: TaskSubcommand) {
         }
         TaskSubcommand::Update(task) => {
             let parameters: UpdateTask = UpdateTask {
-                id: (task.id.clone()),
-                complete: (task.complete.clone()),
-                delete: (task.delete.clone()),
+                id: (task.id),
+                complete: (task.complete),
+                delete: (task.delete),
             };
             let new_task = task.to_todo_data();
             new_task

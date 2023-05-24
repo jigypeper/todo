@@ -44,10 +44,10 @@ impl TodoData {
     }
 
     pub fn update_task(self, update_task: UpdateTask, db_file: &str) -> Result<()> {
-        if update_task.complete == true && update_task.delete == true {
+        if update_task.complete && update_task.delete == true {
             println!("Cannot delete and update a task");
             Ok(())
-        } else if update_task.complete == true {
+        } else if update_task.complete {
             let mut conn = Connection::open(db_file).unwrap();
 
             let tx = conn.transaction()?;
@@ -85,9 +85,6 @@ impl TodoData {
         }
     }
 
-    pub fn get_all(self) -> Option<Vec<TodoData>> {
-        todo!();
-    }
 }
 
 #[derive(Debug, PartialEq)]
