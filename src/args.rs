@@ -55,14 +55,12 @@ pub struct AddTask {
 
 impl AddTask {
     pub fn to_todo_data(self) -> TodoData {
-        let new_type = TodoData {
+        TodoData {
             project: self.project,
             task: self.task,
             due_date: self.due_date,
             complete: self.complete,
-        };
-
-        new_type
+        }
     }
 }
 
@@ -82,14 +80,12 @@ pub struct UpdateTask {
 
 impl UpdateTask {
     pub fn to_todo_data(self) -> TodoData {
-        let new_type = TodoData {
+        TodoData {
             project: String::from("Placeholder"),
             task: String::from("Placeholder"),
             due_date: String::from("Placeholder"),
             complete: self.complete,
-        };
-
-        new_type
+        }
     }
 }
 
