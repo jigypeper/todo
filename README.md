@@ -11,7 +11,7 @@ Add the release folder (in the target folder) to your path. The program will now
 ## How to use
 For information on the various parameters and flags run the following:  
 `todo --help`  
-You can get further help on each of the flags by specifiying the command and the hekp flag e.g.  
+You can get further help on each of the flags by specifiying the command and the help flag e.g.  
 `todo task --help`  
 `todo task add --help`, etc...  
 
