@@ -14,7 +14,7 @@ pub fn show_data(data: Vec<TodoView>) -> Table {
         let naive_date = match NaiveDate::parse_from_str(&date, "%Y-%m-%d") {
             Ok(date) => date,
             Err(_) => {
-                println!(
+                eprintln!(
                     "Date on task '{}' is incorrect, delete and update for correct overdue marking",
                     row.id
                 );
