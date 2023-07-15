@@ -36,7 +36,7 @@ pub fn handle_data(data_to_handle: TaskSubcommand) {
                         let output = show_data(data);
                         output.printstd();
                     }
-                    Err(_) => println!("No database or data"),
+                    Err(_) => eprintln!("No database or data"),
                 }
             }
             _ => {
@@ -46,7 +46,7 @@ pub fn handle_data(data_to_handle: TaskSubcommand) {
                         let output = show_data(data);
                         output.printstd();
                     }
-                    Err(_) => println!("No database or data"),
+                    Err(_) => eprintln!("No database or data"),
                 }
             }
         },
