@@ -84,6 +84,10 @@ impl TodoData {
             Ok(())
         }
     }
+    
+    pub fn archive(self) -> Result<()> {
+        todo!()
+    }
 
 }
 
