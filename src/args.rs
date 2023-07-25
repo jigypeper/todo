@@ -32,6 +32,9 @@ pub enum TaskSubcommand {
 
     /// View tasks
     View(ViewTask),
+    
+    /// Archive tasks
+    Archive(ArchiveTask),
 }
 
 #[derive(Debug, Args)]
@@ -94,4 +97,9 @@ pub struct ViewTask {
     /// View specific project
     #[arg(short, long, default_value_t = String::from("All"))]
     pub project: String,
+}
+
+#[derive(Debug, Args)]
+pub struct ArchiveTask {
+    todo!();
 }
