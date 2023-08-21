@@ -86,6 +86,8 @@ impl TodoData {
     }
     
     pub fn archive(self) -> Result<()> {
+        // is this a requirement?
+        // perhaps needs to push to online db?
         todo!();
     }
 
