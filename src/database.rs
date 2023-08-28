@@ -88,6 +88,11 @@ impl TodoData {
     pub fn archive(self) -> Result<()> {
         // is this a requirement?
         // perhaps needs to push to online db?
+        // maybe needs an api as a microservice
+        todo!();
+    }
+
+    pub fn set_reminder(self) -> Result<()> {
         todo!();
     }
 
