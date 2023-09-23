@@ -7,6 +7,8 @@ set a due date and view tasks.
 Clone the repository to your working directory. Open a terminal/cmd and build the source code with cargo:  
 `cargo build --release`  
 Add the release folder (in the target folder) to your path. The program will now run from any shell.
+Alternatively, run the following command to build and install to your path:  
+`cargo install --path`  
 
 ## How to use
 For information on the various parameters and flags run the following:  
