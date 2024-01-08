@@ -32,9 +32,8 @@ pub enum TaskSubcommand {
 
     /// View tasks
     View(ViewTask),
-    
-    /// Archive tasks
-    Archive(ArchiveTask),
+    // Archive tasks
+    // Archive(ArchiveTask),
 }
 
 #[derive(Debug, Args)]
@@ -99,7 +98,7 @@ pub struct ViewTask {
     pub project: String,
 }
 
-#[derive(Debug, Args)]
-pub struct ArchiveTask {
-    todo!();
-}
+// #[derive(Debug, Args)]
+// pub struct ArchiveTask {
+//     todo!();
+// }
