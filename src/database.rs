@@ -84,7 +84,7 @@ impl TodoData {
             Ok(())
         }
     }
-    
+
     pub fn archive(self) -> Result<()> {
         // is this a requirement?
         // perhaps needs to push to online db?
@@ -95,7 +95,6 @@ impl TodoData {
     pub fn set_reminder(self) -> Result<()> {
         todo!();
     }
-
 }
 
 #[derive(Debug, PartialEq)]
