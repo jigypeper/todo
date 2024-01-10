@@ -34,6 +34,7 @@ pub enum TaskSubcommand {
     View(ViewTask),
     // Archive tasks
     // Archive(ArchiveTask),
+    Stats(GetStats),
 }
 
 #[derive(Debug, Args)]
@@ -71,11 +72,11 @@ pub struct UpdateTask {
     /// Row ID for task
     pub id: u64,
 
-    /// Mark as complete (no args needed just the flag i.e -c or -complete)
+    /// Mark as complete (no args needed just the flag i.e -c or --complete)
     #[arg(short, long, default_value_t = false)]
     pub complete: bool,
 
-    /// Delete task (no args needed just the flag i.e -d or -delete)
+    /// Delete task (no args needed just the flag i.e -d or --delete)
     #[arg(short, long, default_value_t = false)]
     pub delete: bool,
 }
@@ -102,3 +103,14 @@ pub struct ViewTask {
 // pub struct ArchiveTask {
 //     todo!();
 // }
+
+#[derive(Debug, Args)]
+pub struct GetStats {
+    /// Get pending tasks count (no args needed just the flag i.e -p or --pending)
+    #[arg(short, long, default_value_t = false)]
+    pub pending: bool,
+
+    /// Get overdue tasks count (no args needed just the flag i.e -o or -overdue)
+    #[arg(short, long, default_value_t = false)]
+    pub overdue: bool,
+}

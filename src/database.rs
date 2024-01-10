@@ -1,5 +1,5 @@
 use crate::args::UpdateTask;
-use rusqlite::{named_params, Connection, Result};
+use rusqlite::{named_params, params, Connection, Result};
 
 pub struct TodoData {
     pub project: String,
@@ -164,6 +164,30 @@ pub fn get_all_tasks(db_file: &str) -> Result<Vec<TodoView>> {
     Ok(result)
 }
 
+pub fn count_pending(db_file: &str) -> Result<u32> {
+    let conn = Connection::open(db_file).unwrap();
+
+    let count: u32 = conn.query_row(
+        "SELECT COUNT(*) FROM data WHERE complete = 0",
+        params![],
+        |row| row.get(0),
+    )?;
+
+    Ok(count)
+}
+
+pub fn count_overdue(db_file: &str) -> Result<u32> {
+    let conn = Connection::open(db_file).unwrap();
+
+    let count: u32 = conn.query_row(
+        "SELECT COUNT(*) FROM data WHERE complete = 0 AND due_date < CURRENT_DATE",
+        params![],
+        |row| row.get(0),
+    )?;
+
+    Ok(count)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -305,5 +329,41 @@ mod tests {
             }]),
             get_tasks("Apple", TEST_DATABASE)
         );
+    }
+
+    #[test]
+    fn get_pending_count() {
+        drop_table().unwrap();
+
+        let prepare = TodoData {
+            project: String::from("Apple"),
+            task: String::from("Test"),
+            due_date: String::from("2023-01-01"),
+            complete: false,
+        };
+
+        prepare
+            .write_data(TEST_DATABASE)
+            .expect("database does not exist");
+
+        assert_eq!(Ok(1), count_pending(TEST_DATABASE));
+    }
+
+    #[test]
+    fn get_overdue_count() {
+        drop_table().unwrap();
+
+        let prepare = TodoData {
+            project: String::from("Apple"),
+            task: String::from("Test"),
+            due_date: String::from("2023-01-01"),
+            complete: false,
+        };
+
+        prepare
+            .write_data(TEST_DATABASE)
+            .expect("database does not exist");
+
+        assert_eq!(Ok(1), count_overdue(TEST_DATABASE));
     }
 }
