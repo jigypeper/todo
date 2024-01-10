@@ -1,6 +1,6 @@
 use crate::{
     args::{TaskSubcommand, UpdateTask},
-    database::{get_all_tasks, get_tasks},
+    database::{count_overdue, count_pending, get_all_tasks, get_tasks},
     views::show_data,
 };
 
@@ -50,5 +50,23 @@ pub fn handle_data(data_to_handle: TaskSubcommand) {
                 }
             }
         },
+        TaskSubcommand::Stats(numbers) => {
+            if numbers.pending && numbers.overdue {
+                println!(
+                    "{}",
+                    count_pending(dir.join(DB_FILE).to_str().unwrap()).unwrap()
+                )
+            } else if !numbers.pending && numbers.overdue {
+                println!(
+                    "{}",
+                    count_overdue(dir.join(DB_FILE).to_str().unwrap()).unwrap()
+                )
+            } else {
+                println!(
+                    "{}",
+                    count_pending(dir.join(DB_FILE).to_str().unwrap()).unwrap()
+                )
+            }
+        }
     }
 }
