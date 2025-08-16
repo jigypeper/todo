@@ -28,25 +28,27 @@ pub fn handle_data(data_to_handle: TaskSubcommand) {
                 .update_task(parameters, dir.join(DB_FILE).to_str().unwrap())
                 .expect("Database does not exist, create task first");
         }
-        TaskSubcommand::View(view) => if &view.project[..] == "All" {
-            let results = get_all_tasks(dir.join(DB_FILE).to_str().unwrap());
-            match results {
-                Ok(data) => {
-                    let output = show_data(data);
-                    output.printstd();
+        TaskSubcommand::View(view) => {
+            if &view.project[..] == "All" {
+                let results = get_all_tasks(dir.join(DB_FILE).to_str().unwrap());
+                match results {
+                    Ok(data) => {
+                        let output = show_data(data);
+                        output.printstd();
+                    }
+                    Err(_) => eprintln!("No database or data"),
                 }
-                Err(_) => eprintln!("No database or data"),
-            }
-        } else {
-            let results = get_tasks(&view.project[..], dir.join(DB_FILE).to_str().unwrap());
-            match results {
-                Ok(data) => {
-                    let output = show_data(data);
-                    output.printstd();
+            } else {
+                let results = get_tasks(&view.project[..], dir.join(DB_FILE).to_str().unwrap());
+                match results {
+                    Ok(data) => {
+                        let output = show_data(data);
+                        output.printstd();
+                    }
+                    Err(_) => eprintln!("No database or data"),
                 }
-                Err(_) => eprintln!("No database or data"),
             }
-        },
+        }
         TaskSubcommand::Stats(numbers) => {
             if numbers.pending && numbers.overdue {
                 println!(
