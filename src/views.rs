@@ -23,7 +23,7 @@ pub fn show_data(data: Vec<TodoView>) -> Table {
         };
         let naive_time = NaiveTime::from_hms_opt(0, 0, 0).unwrap();
         let naive_date_time = NaiveDateTime::new(naive_date, naive_time);
-        let utc_date_time = DateTime::<Utc>::from_utc(naive_date_time, Utc);
+        let utc_date_time = DateTime::<Utc>::from_naive_utc_and_offset(naive_date_time, Utc);
 
         if today > utc_date_time && row.complete != true {
             table.add_row(row![
