@@ -44,7 +44,7 @@ impl TodoData {
     }
 
     pub fn update_task(self, update_task: UpdateTask, db_file: &str) -> Result<()> {
-        if update_task.complete && update_task.delete == true {
+        if update_task.complete && update_task.delete {
             println!("Cannot delete and update a task");
             Ok(())
         } else if update_task.complete {

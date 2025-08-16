@@ -25,7 +25,7 @@ pub fn show_data(data: Vec<TodoView>) -> Table {
         let naive_date_time = NaiveDateTime::new(naive_date, naive_time);
         let utc_date_time = DateTime::<Utc>::from_naive_utc_and_offset(naive_date_time, Utc);
 
-        if today > utc_date_time && row.complete != true {
+        if today > utc_date_time && !row.complete {
             table.add_row(row![
                 bFr => row.id,
                 row.project,
