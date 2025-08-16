@@ -68,7 +68,7 @@ impl AddTask {
     }
 }
 
-#[derive(Debug, Args)]
+#[derive(Debug, Args, Copy, Clone)]
 pub struct UpdateTask {
     /// Row ID for task
     pub id: u64,

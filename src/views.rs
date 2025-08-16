@@ -3,6 +3,11 @@ use chrono::{DateTime, NaiveDate, NaiveDateTime, NaiveTime, Utc};
 
 use prettytable::Table;
 
+/// Shows task data in a formatted table
+///
+/// # Panics
+///
+/// This function will panic if date parsing fails for the fallback date
 #[must_use]
 pub fn show_data(data: Vec<TodoView>) -> Table {
     let today: chrono::DateTime<Utc> = Utc::now();
