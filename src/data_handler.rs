@@ -18,36 +18,33 @@ pub fn handle_data(data_to_handle: TaskSubcommand) {
                 .expect("No data");
         }
         TaskSubcommand::Update(task) => {
-            let parameters: UpdateTask = UpdateTask {
-                id: (task.id),
-                complete: (task.complete),
-                delete: (task.delete),
+            let parameters = UpdateTask {
+                id: task.id,
+                complete: task.complete,
+                delete: task.delete,
             };
             let new_task = task.to_todo_data();
             new_task
                 .update_task(parameters, dir.join(DB_FILE).to_str().unwrap())
                 .expect("Database does not exist, create task first");
         }
-        TaskSubcommand::View(view) => match &view.project[..] {
-            "All" => {
-                let results = get_all_tasks(dir.join(DB_FILE).to_str().unwrap());
-                match results {
-                    Ok(data) => {
-                        let output = show_data(data);
-                        output.printstd();
-                    }
-                    Err(_) => eprintln!("No database or data"),
+        TaskSubcommand::View(view) => if &view.project[..] == "All" {
+            let results = get_all_tasks(dir.join(DB_FILE).to_str().unwrap());
+            match results {
+                Ok(data) => {
+                    let output = show_data(data);
+                    output.printstd();
                 }
+                Err(_) => eprintln!("No database or data"),
             }
-            _ => {
-                let results = get_tasks(&view.project[..], dir.join(DB_FILE).to_str().unwrap());
-                match results {
-                    Ok(data) => {
-                        let output = show_data(data);
-                        output.printstd();
-                    }
-                    Err(_) => eprintln!("No database or data"),
+        } else {
+            let results = get_tasks(&view.project[..], dir.join(DB_FILE).to_str().unwrap());
+            match results {
+                Ok(data) => {
+                    let output = show_data(data);
+                    output.printstd();
                 }
+                Err(_) => eprintln!("No database or data"),
             }
         },
         TaskSubcommand::Stats(numbers) => {
@@ -55,17 +52,17 @@ pub fn handle_data(data_to_handle: TaskSubcommand) {
                 println!(
                     "{}",
                     count_pending(dir.join(DB_FILE).to_str().unwrap()).unwrap()
-                )
+                );
             } else if !numbers.pending && numbers.overdue {
                 println!(
                     "{}",
                     count_overdue(dir.join(DB_FILE).to_str().unwrap()).unwrap()
-                )
+                );
             } else {
                 println!(
                     "{}",
                     count_pending(dir.join(DB_FILE).to_str().unwrap()).unwrap()
-                )
+                );
             }
         }
     }

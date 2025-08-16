@@ -3,6 +3,7 @@ use chrono::{DateTime, NaiveDate, NaiveDateTime, NaiveTime, Utc};
 
 use prettytable::Table;
 
+#[must_use]
 pub fn show_data(data: Vec<TodoView>) -> Table {
     let today: chrono::DateTime<Utc> = Utc::now();
     let mut table = Table::new();
@@ -10,16 +11,15 @@ pub fn show_data(data: Vec<TodoView>) -> Table {
 
     for row in data {
         // use chrono to convert date string into a utc datetime type
-        let date = row.due_date.clone();
-        let naive_date = match NaiveDate::parse_from_str(&date, "%Y-%m-%d") {
-            Ok(date) => date,
-            Err(_) => {
-                eprintln!(
-                    "Date on task '{}' is incorrect, delete and update for correct overdue marking",
-                    row.id
-                );
-                NaiveDate::parse_from_str("2000-01-01", "%Y-%m-%d").unwrap()
-            }
+        let due_date = row.due_date.clone();
+        let naive_date = if let Ok(parsed_date) = NaiveDate::parse_from_str(&due_date, "%Y-%m-%d") {
+            parsed_date
+        } else {
+            eprintln!(
+                "Date on task '{}' is incorrect, delete and update for correct overdue marking",
+                row.id
+            );
+            NaiveDate::parse_from_str("2000-01-01", "%Y-%m-%d").unwrap()
         };
         let naive_time = NaiveTime::from_hms_opt(0, 0, 0).unwrap();
         let naive_date_time = NaiveDateTime::new(naive_date, naive_time);

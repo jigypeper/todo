@@ -31,10 +31,7 @@ impl TodoData {
                 ":project": self.project,
                 ":task": self.task,
                 ":due_date": self.due_date,
-                ":complete": match self.complete {
-                    true => 1,
-                    false => 0,
-                },
+                ":complete": if self.complete { 1 } else { 0 },
             },
         )?;
 
@@ -57,10 +54,7 @@ impl TodoData {
                 WHERE id = :id",
                 named_params! {
                     ":id": update_task.id,
-                    ":complete": match self.complete {
-                        true => 1,
-                        false => 0,
-                    },
+                    ":complete": if self.complete { 1 } else { 0 },
                 },
             )?;
 
@@ -97,7 +91,7 @@ impl TodoData {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct TodoView {
     pub id: u64,
     pub project: String,
@@ -121,10 +115,7 @@ pub fn get_tasks(project_name: &str, db_file: &str) -> Result<Vec<TodoView>> {
             project: row.get(1)?,
             task: row.get(2)?,
             due_date: row.get(3)?,
-            complete: match row.get(4).unwrap() {
-                1 => true,
-                _ => false,
-            },
+            complete: matches!(row.get(4).unwrap(), 1),
         })
     })?;
 
@@ -148,10 +139,7 @@ pub fn get_all_tasks(db_file: &str) -> Result<Vec<TodoView>> {
             project: row.get(1)?,
             task: row.get(2)?,
             due_date: row.get(3)?,
-            complete: match row.get(4).unwrap() {
-                1 => true,
-                _ => false,
-            },
+            complete: matches!(row.get(4).unwrap(), 1),
         })
     })?;
 
