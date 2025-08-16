@@ -9,6 +9,15 @@ pub struct TodoData {
 }
 
 impl TodoData {
+    /// Writes task data to the database
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if database operations fail
+    ///
+    /// # Panics
+    ///
+    /// This function will panic if the database connection cannot be established
     pub fn write_data(self, db_file: &str) -> Result<()> {
         let mut conn = Connection::open(db_file).unwrap();
 
@@ -31,10 +40,7 @@ impl TodoData {
                 ":project": self.project,
                 ":task": self.task,
                 ":due_date": self.due_date,
-                ":complete": match self.complete {
-                    true => 1,
-                    false => 0,
-                },
+                ":complete": i32::from(self.complete),
             },
         )?;
 
@@ -43,10 +49,18 @@ impl TodoData {
         Ok(())
     }
 
+    /// Updates a task in the database
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if database operations fail
+    ///
+    /// # Panics
+    ///
+    /// This function will panic if the database connection cannot be established
     pub fn update_task(self, update_task: UpdateTask, db_file: &str) -> Result<()> {
-        if update_task.complete && update_task.delete == true {
+        if update_task.complete && update_task.delete {
             println!("Cannot delete and update a task");
-            Ok(())
         } else if update_task.complete {
             let mut conn = Connection::open(db_file).unwrap();
 
@@ -57,16 +71,11 @@ impl TodoData {
                 WHERE id = :id",
                 named_params! {
                     ":id": update_task.id,
-                    ":complete": match self.complete {
-                        true => 1,
-                        false => 0,
-                    },
+                    ":complete": i32::from(self.complete),
                 },
             )?;
 
             tx.commit()?;
-
-            Ok(())
         } else {
             let mut conn = Connection::open(db_file).unwrap();
 
@@ -80,11 +89,15 @@ impl TodoData {
             )?;
 
             tx.commit()?;
-
-            Ok(())
         }
+        Ok(())
     }
 
+    /// Archives the task
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if archiving fails
     pub fn archive(self) -> Result<()> {
         // is this a requirement?
         // perhaps needs to push to online db?
@@ -92,12 +105,17 @@ impl TodoData {
         todo!();
     }
 
+    /// Sets a reminder for the task
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if setting reminder fails
     pub fn set_reminder(self) -> Result<()> {
         todo!();
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct TodoView {
     pub id: u64,
     pub project: String,
@@ -106,6 +124,15 @@ pub struct TodoView {
     pub complete: bool,
 }
 
+/// Gets tasks for a specific project
+///
+/// # Errors
+///
+/// Returns an error if database operations fail
+///
+/// # Panics
+///
+/// This function will panic if the database connection cannot be established
 pub fn get_tasks(project_name: &str, db_file: &str) -> Result<Vec<TodoView>> {
     let conn = Connection::open(db_file).unwrap();
 
@@ -121,10 +148,7 @@ pub fn get_tasks(project_name: &str, db_file: &str) -> Result<Vec<TodoView>> {
             project: row.get(1)?,
             task: row.get(2)?,
             due_date: row.get(3)?,
-            complete: match row.get(4).unwrap() {
-                1 => true,
-                _ => false,
-            },
+            complete: matches!(row.get(4).unwrap(), 1),
         })
     })?;
 
@@ -137,6 +161,15 @@ pub fn get_tasks(project_name: &str, db_file: &str) -> Result<Vec<TodoView>> {
     Ok(result)
 }
 
+/// Gets all tasks from the database
+///
+/// # Errors
+///
+/// Returns an error if database operations fail
+///
+/// # Panics
+///
+/// This function will panic if the database connection cannot be established
 pub fn get_all_tasks(db_file: &str) -> Result<Vec<TodoView>> {
     let conn = Connection::open(db_file).unwrap();
 
@@ -148,10 +181,7 @@ pub fn get_all_tasks(db_file: &str) -> Result<Vec<TodoView>> {
             project: row.get(1)?,
             task: row.get(2)?,
             due_date: row.get(3)?,
-            complete: match row.get(4).unwrap() {
-                1 => true,
-                _ => false,
-            },
+            complete: matches!(row.get(4).unwrap(), 1),
         })
     })?;
 
@@ -164,6 +194,15 @@ pub fn get_all_tasks(db_file: &str) -> Result<Vec<TodoView>> {
     Ok(result)
 }
 
+/// Counts pending tasks in the database
+///
+/// # Errors
+///
+/// Returns an error if database operations fail
+///
+/// # Panics
+///
+/// This function will panic if the database connection cannot be established
 pub fn count_pending(db_file: &str) -> Result<u32> {
     let conn = Connection::open(db_file).unwrap();
 
@@ -176,6 +215,15 @@ pub fn count_pending(db_file: &str) -> Result<u32> {
     Ok(count)
 }
 
+/// Counts overdue tasks in the database
+///
+/// # Errors
+///
+/// Returns an error if database operations fail
+///
+/// # Panics
+///
+/// This function will panic if the database connection cannot be established
 pub fn count_overdue(db_file: &str) -> Result<u32> {
     let conn = Connection::open(db_file).unwrap();
 

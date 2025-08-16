@@ -57,6 +57,7 @@ pub struct AddTask {
 }
 
 impl AddTask {
+    #[must_use]
     pub fn to_todo_data(self) -> TodoData {
         TodoData {
             project: self.project,
@@ -67,7 +68,7 @@ impl AddTask {
     }
 }
 
-#[derive(Debug, Args)]
+#[derive(Debug, Args, Copy, Clone)]
 pub struct UpdateTask {
     /// Row ID for task
     pub id: u64,
@@ -82,6 +83,7 @@ pub struct UpdateTask {
 }
 
 impl UpdateTask {
+    #[must_use]
     pub fn to_todo_data(self) -> TodoData {
         TodoData {
             project: String::from("Placeholder"),
