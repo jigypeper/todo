@@ -1,6 +1,9 @@
 use crate::{
     args::TaskSubcommand,
-    database::{archive_task, count_overdue, count_pending, get_all_archived_tasks, get_all_tasks, get_archived_tasks, get_tasks},
+    database::{
+        archive_task, count_overdue, count_pending, get_all_archived_tasks, get_all_tasks,
+        get_archived_tasks, get_tasks,
+    },
     views::show_data,
 };
 
@@ -75,18 +78,27 @@ pub fn handle_data(data_to_handle: TaskSubcommand) {
                     Err(_) => eprintln!("No database or archived data"),
                 }
             } else {
-                let results = get_archived_tasks(&view_archive.project[..], dir.join(DB_FILE).to_str().unwrap());
+                let results = get_archived_tasks(
+                    &view_archive.project[..],
+                    dir.join(DB_FILE).to_str().unwrap(),
+                );
                 match results {
                     Ok(data) => {
                         if data.is_empty() {
-                            println!("No archived tasks found for project: {}", view_archive.project);
+                            println!(
+                                "No archived tasks found for project: {}",
+                                view_archive.project
+                            );
                         } else {
                             println!("\n=== ARCHIVED TASKS: {} ===", view_archive.project);
                             let output = show_data(data);
                             output.printstd();
                         }
                     }
-                    Err(_) => eprintln!("No database or archived data for project: {}", view_archive.project),
+                    Err(_) => eprintln!(
+                        "No database or archived data for project: {}",
+                        view_archive.project
+                    ),
                 }
             }
         }

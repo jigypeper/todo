@@ -265,7 +265,8 @@ pub fn archive_task(task_id: u64, db_file: &str) -> Result<()> {
 
     // First, get the task data
     let task_data: Result<(String, String, String, bool), rusqlite::Error> = {
-        let mut stmt = tx.prepare("SELECT project, task, due_date, complete FROM data WHERE id = ?")?;
+        let mut stmt =
+            tx.prepare("SELECT project, task, due_date, complete FROM data WHERE id = ?")?;
         stmt.query_row(params![task_id], |row| {
             Ok((
                 row.get::<_, String>(0)?,
@@ -320,7 +321,8 @@ pub fn get_all_archived_tasks(db_file: &str) -> Result<Vec<TodoView>> {
         (),
     )?;
 
-    let mut stmt = conn.prepare("SELECT id, project, task, due_date, complete FROM archived_data ORDER BY id;")?;
+    let mut stmt = conn
+        .prepare("SELECT id, project, task, due_date, complete FROM archived_data ORDER BY id;")?;
 
     let tasks_iter = stmt.query_map([], |row| {
         Ok(TodoView {
@@ -582,7 +584,8 @@ mod tests {
             complete: false,
         };
 
-        task.write_data(TEST_DATABASE).expect("Failed to create task");
+        task.write_data(TEST_DATABASE)
+            .expect("Failed to create task");
 
         // Archive the task
         assert_eq!(Ok(()), archive_task(1, TEST_DATABASE));
@@ -596,7 +599,7 @@ mod tests {
         assert_eq!(archived_tasks.len(), 1);
         assert_eq!(archived_tasks[0].project, "Work");
         assert_eq!(archived_tasks[0].task, "Complete presentation");
-        
+
         drop_table().unwrap();
     }
 
@@ -628,8 +631,12 @@ mod tests {
             complete: false,
         };
 
-        task1.write_data(TEST_DATABASE).expect("Failed to create task1");
-        task2.write_data(TEST_DATABASE).expect("Failed to create task2");
+        task1
+            .write_data(TEST_DATABASE)
+            .expect("Failed to create task1");
+        task2
+            .write_data(TEST_DATABASE)
+            .expect("Failed to create task2");
 
         // Archive both tasks
         archive_task(1, TEST_DATABASE).expect("Failed to archive task1");
@@ -642,7 +649,7 @@ mod tests {
         // Verify main table is empty
         let main_tasks = get_all_tasks(TEST_DATABASE).unwrap();
         assert_eq!(main_tasks.len(), 0);
-        
+
         drop_table().unwrap();
     }
 
@@ -665,8 +672,12 @@ mod tests {
             complete: false,
         };
 
-        work_task.write_data(TEST_DATABASE).expect("Failed to create work task");
-        personal_task.write_data(TEST_DATABASE).expect("Failed to create personal task");
+        work_task
+            .write_data(TEST_DATABASE)
+            .expect("Failed to create work task");
+        personal_task
+            .write_data(TEST_DATABASE)
+            .expect("Failed to create personal task");
 
         // Archive both tasks
         archive_task(1, TEST_DATABASE).expect("Failed to archive work task");
@@ -683,7 +694,7 @@ mod tests {
         assert_eq!(personal_archived.len(), 1);
         assert_eq!(personal_archived[0].project, "Personal");
         assert_eq!(personal_archived[0].task, "Personal task");
-        
+
         drop_table().unwrap();
     }
 
@@ -699,7 +710,8 @@ mod tests {
             complete: false,
         };
 
-        task.write_data(TEST_DATABASE).expect("Failed to create task");
+        task.write_data(TEST_DATABASE)
+            .expect("Failed to create task");
 
         // Archive the task
         archive_task(1, TEST_DATABASE).expect("Failed to archive task");
@@ -707,7 +719,7 @@ mod tests {
         // Verify exactly one task in archive, zero in main
         let main_count = get_all_tasks(TEST_DATABASE).unwrap().len();
         let archive_count = get_all_archived_tasks(TEST_DATABASE).unwrap().len();
-        
+
         assert_eq!(main_count, 0, "Task should be removed from main table");
         assert_eq!(archive_count, 1, "Task should exist in archive table");
     }

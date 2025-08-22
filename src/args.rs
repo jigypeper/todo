@@ -32,13 +32,13 @@ pub enum TaskSubcommand {
 
     /// View tasks
     View(ViewTask),
-    
+
     /// Archive a task
     Archive(ArchiveTask),
-    
+
     /// View archived tasks
     ViewArchive(ViewArchiveTask),
-    
+
     Stats(GetStats),
 }
 
