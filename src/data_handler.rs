@@ -17,6 +17,7 @@ static DB_FILE: &str = "todo.db";
 /// - The current executable path cannot be determined
 /// - Database file path conversion fails
 /// - Database operations fail unexpectedly
+#[allow(clippy::too_many_lines)]
 pub fn handle_data(data_to_handle: TaskSubcommand) {
     let path = std::env::current_exe().unwrap();
     let dir = path.parent().expect("Binary should be in a directory");
