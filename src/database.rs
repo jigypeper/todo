@@ -93,18 +93,6 @@ impl TodoData {
         Ok(())
     }
 
-    /// Archives the task
-    ///
-    /// # Errors
-    ///
-    /// Returns an error if archiving fails
-    pub fn archive(self) -> Result<()> {
-        // is this a requirement?
-        // perhaps needs to push to online db?
-        // maybe needs an api as a microservice
-        todo!();
-    }
-
     /// Sets a reminder for the task
     ///
     /// # Errors
